@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Infographics Critique</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+  </head>
+  <body>
+    <div class="heading">
+      <h1 class="title">D3 & Animation</h1>
+    </div>
+    <div class="content-area">
+      <hr>
+      <div class="infographic">
+      <h2></h2><br><br>
+        <p>
+          &nbsp;&nbsp;&nbsp;&nbsp;This website has an interactive timeline of the history of the company where you can click on its dots and see small articles for each year.
+          To implement something similar to this website using D3, I would make an SVG element to create the timeline at the top and a div for the article section at the bottom. I set an event listener using .on(“click”) method to the SVG and add a function to trigger a transition by using .transition(). I can also use ease() method to make the animation smooth. For the article section, I would use the similar technique used to make the tooltips, which is to create a tooltip upon click using .on(“click”) and delete it when other article is clicked. The buttons on both sides of the page can be implemented using simple CSS hover pseudo class by shifting the element toward right or left when hovered.
+          <p>Source - <a href="https://lemonly.com/point-b/timeline/third-draft/">Click here</a>
+        </div>
+      </div>
+    </div>
+
+  </body>
+</html>
