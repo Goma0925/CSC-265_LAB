@@ -1,0 +1,72 @@
+*{
+  margin: 0px;
+    padding: 0px;
+}
+
+body{
+  margin-bottom: 100px;
+}
+
+h1{
+  color: white;
+}
+
+p{
+  margin-top: 15px;
+}
+
+img{
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+}
+
+img .chart{
+  width: 50%;
+}
+
+.description{
+  margin-left: 10%;
+  margin-right: 10%;
+}
+.heading{
+  margin: 0;
+  height: 70px;
+  background-color: black;
+  border-bottom: 4px solid grey;
+}
+
+.title{
+  margin-right: auto;
+  margin-left: auto;
+  font-size: 50px;
+  height: 100%;
+  padding-top: 5px;
+  text-align: center;
+}
+
+.content-area{
+  padding-top: 40px;
+  padding-left: 10%;
+  padding-right: 10%;
+}
+
+.infographic{
+  margin: 20px;
+}
+
+.tab{
+  margin-left:5em
+}
+
+.code-snipet{
+  background-color: grey;
+  color:white;
+  padding: 10px;
+  display: block;
+}
+
+.biggerFont{
+  font-size: 20px;
+}

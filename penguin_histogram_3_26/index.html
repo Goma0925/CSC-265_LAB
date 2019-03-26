@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Penguin Histogram</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+  </head>
+  <body>
+    <div class="heading">
+      <h1 class="title">Penguin Histogram Prep</h1>
+    </div>
+    <div class="content-area">
+      <hr>
+      <div class="infographic">
+      <center><h2>Quiz grade for Crafty Penguin</h2></center>
+        <p class="description">
+          <img src="histogram.png" class="chart"/><br>
+          <center>*This histogram is created based on the data of Crafty Penguin's quiz grades.</center><br>
+          <h2>How I created the histogram</h2>
+          <div class="tab">
+            (1) To reformat the json data file in csv that can be read by excel, I wrote a simple python program. This program strips off the son string, extract the grades, count the frequency of each grade, and reformat in a csv string.<br><br>
+            #Code in (1):
+            <xmp class="code-snipet">
+
+              data = ""
+              with open("data.txt", "r") as file:
+                  data = file.read()
+
+              print("-----")
+              counter = {'1':0,'2':0,'3':0,'4':0,'5':0,'6':0,'7':0,'8':0,'9':0,'10':0,}
+              for i in range(38):
+                  grade_start = data.find('"grade": ') + len('"grade": ')
+                  grade_end = data.find(",", grade_start - 1)
+                  grade = str(data[grade_start:grade_end])
+                  data = data[grade_end:-1]
+
+                  counter[grade] = counter[grade] + 1
+
+              print("grade,", end="")
+              for i in range(10):
+                  print(str(i+1) + ",", end="")
+              print()
+              print("frequency,", end="")
+              for i in range(10):
+                  print(str(counter[str(i+1)]) + ",", end="")
+              </xmp><br><br>
+              #Output of the code above:
+              <xmp class="code-snipet">
+                grade,1,2,3,4,5,6,7,8,9,10,
+                frequency,0,0,0,0,0,1,8,16,11,2,
+                </xmp><br><br>
+
+                (2)Save the output in a csv file and open it on google sheet, which will produce a spreadsheet like this:<br><br>
+                <img src="spread_sheet.png">
+                <br><br>
+                (3)Using the google spread sheet's insert feature, create a area chart using the spreadsheet. The reason for choosing the area chart is that the histogram in Google spreadsheet creates the x-axis based on range that is hard to interpret. So created the area chart to mimic the histogram.
+          </div>
+        </p>
+      </div>
+    </div>
+
+  </body>
+</html>
