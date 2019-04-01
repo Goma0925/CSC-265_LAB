@@ -116,7 +116,7 @@ console.log("extent", d3.extent(dataSet[day]))
                 .range([graphHeight, 0]);
 
   var yAxis = d3.axisLeft()
-   .scale(yScale);
+                .scale(yScale);
 
   var binMaker = d3.histogram()
                     .domain([0,10])
@@ -168,7 +168,7 @@ console.log("extent", d3.extent(dataSet[day]))
                             .attr("x", function(bar, i){return i * barWidth + margins.left})
                             .attr("y", function(bar, i){return graphHeight - yScale(bar.length)})
                             .attr("width", barWidth)
-                            .attr("height", function(bar){console.log("yscale:", yScale(bar.length));return yScale(bar.length)})
+                            .attr("height", function(bar){console.log("translte", yScale(bar.length));return yScale(bar.length)})
                             .attr("class", "graph-bar");
 
   var barLabel = graphData.selectAll("text")
