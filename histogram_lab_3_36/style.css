@@ -1,26 +1,53 @@
 h1{
-  
+  text-align: center;
 }
+
+body{
+  background-color: #80ced6;
+
+}
+
+.heading{
+  color: #034f84;
+  position: fixed;
+  display: block;
+  font-size: 50px;
+  margin: 0;
+  height: 60px;
+  width: 100%;
+  background-color: #deeaee;
+  border-bottom: 4px solid grey;
+}
+
 
 .graph-bar{
   stroke: white;
   fill:blue;
-  stroke-width:3;
+  stroke-width:1;
   fill-opacity:0.6;
   stroke-opacity:0.9
 }
 
 .sidebar{
   position: fixed;
-  top:0;
+  top:64px;
   right: 0;
   left: 0;
   bottom: 0;
   overflow: scroll;
 }
 
-.pure-u-1-8.content{
+
+li{
+  text-align: center;
+  border-bottom: solid;
+  border-color: #f0efef;
+  background-color:  white;
+}
+
+body > div.pure-u-21-24.content{
   position: absolute;
-  left: 15%;
-  width: 100%;
+  top:90px;
+  left: 12.8%;
+  width: 85%;
 }

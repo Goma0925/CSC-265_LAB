@@ -26,15 +26,15 @@ var reformatData = function(jsonData){
 
 //Graph settings
 var screenSettings = {
-width:700,
-height:400
+  width: window.innerWidth * 0.8,
+  height: window.innerHeight * 0.8
 };
 
 var marginSettings = {
-  top:20,
-  bottom: 30,
-  left: 50,
-  right: 50
+  top:60,
+  bottom: 80,
+  left: 80,
+  right: 0
 }
 
 var updateChart = function(dataSet, svgSelector, selectedDay, screen, margins){
@@ -55,7 +55,7 @@ var updateChart = function(dataSet, svgSelector, selectedDay, screen, margins){
 
     var yScale = d3.scaleLinear()
                   .domain([0, dataSet[day].length])
-                  .range([graphHeight - 15,0]);
+                  .range([0, graphHeight]);
 
     var binMaker = d3.histogram()
                       .domain([0,10])
@@ -69,28 +69,32 @@ var updateChart = function(dataSet, svgSelector, selectedDay, screen, margins){
 
     var graphData = graphSVG.select(".graph-data", true);
 
-    var graphBars = graphData.selectAll("rect")
+    var graphBars = graphData.selectAll(".graph-bar")
                               .data(bins)
-                              .enter()
-                              .append("rect")
-                              .attr("x", function(bar, i){return i * barWidth + margins.left})
-                              .attr("y", function(bar, i){return graphHeight - yScale(bar.length)})
+                              .transition()
+                              .duration(1000)
+                              .attr("x", function(bar, i){return (i * barWidth) + margins.left})
+                              .attr("y", function(bar, i){console.log("bar-y:" + yScale(bar.length));return graphHeight + margins.top - yScale(bar.length)})
                               .attr("width", barWidth)
-                              .attr("height", function(bar){console.log("yScale:", yScale(bar.length));return yScale(bar.length)})
-                              .attr("class", "graph-bar");
+                              .attr("height", function(bar){console.log("Value:"+ bar.length + " Height:" +  yScale(bar.length));return yScale(bar.length)})
+                              .attr("class", "graph-bar")
 
-    var barLabel = graphData.selectAll("text")
+
+    var barLabels = graphData.selectAll("text")
                             .data(bins)
                             .enter()
                             .append("text")
-                            .attr("x", function(bar, i){return i * barWidth + margins.left})
-                            .attr("y", function(){return graphHeight + 10})
+                            .attr("x", function(bar, i){return (i * barWidth) + margins.left + (barWidth/2.4)})
+                            .attr("y", function(){return graphHeight + margins.top + 30})
                             .text(function(bar){
-                              console.log("String", String(bar.x0) + "-" + String(bar.x1));
+                              //console.log("String", String(bar.x0) + "-" + String(bar.x1));
                               return String(bar.x0) + "-" + String(bar.x1);
                             })
                             .attr("class", "bar-label")
+                            .attr("font-size", 25);
 
+    d3.select(".day-label").text("")
+                          .text("Day" + selectedDay.replace("day", ""))
 };
 
 var drawChart = function(dataSet, svgSelector, selectedDay, screen, margins)
@@ -108,15 +112,20 @@ console.log("extent", d3.extent(dataSet[day]))
   var xScale = d3.scaleLinear()
                 .domain(d3.extent(dataSet[day]));
                 //.range([0, graphWidth])
+  var xAxisScale = d3.scaleLinear()
+                    .domain([0, dataSet[day].length])
+                    .range([0, graphHeight]);
 
-          console.log("length:", dataSet[day].length);
-          console.log("height", graphHeight)
   var yScale = d3.scaleLinear()
+                .domain([0, dataSet[day].length])
+                .range([0, graphHeight]);
+
+  var yAxisScale = d3.scaleLinear()
                 .domain([0, dataSet[day].length])
                 .range([graphHeight, 0]);
 
   var yAxis = d3.axisLeft()
-                .scale(yScale);
+                .scale(yAxisScale);
 
   var binMaker = d3.histogram()
                     .domain([0,10])
@@ -131,62 +140,80 @@ console.log("extent", d3.extent(dataSet[day]))
   //console.log("Input data:",  Object.keys(dataSet));
  console.log("bins:", bins);
 
-
-
-
-  //var yAxisScale = d3.scaleLinear()
-                //.domain([0, 100])
-                //.range([graphHeight - 15, 0]);
-
-  //var yAxis = d3.axisLeft().scale(yAxisScale);
-
   var colorScale = d3.scaleOrdinal(d3.schemeAccent);
 
-  //var barWidth = graphWidth / scoreFrequencies.length;
-  //
   var graphSVG = d3.select(svgSelector)
               .attr("width", screen.width)
-              .attr("height", screen.height);
+              .attr("height", screen.height)
 
-              graphSVG.append("g")
-                  .call(yAxis)
-                  .attr("transform", function(){
-                  return "translate(" + (margins.left - 2) + "," + "0)";
-                  });
+  graphBorder = graphSVG.append("rect")
+                     .attr("border-style", "solid")
+                     .attr("x", margins.left)
+                     .attr("y", margins.top)
+                     .attr("width", graphWidth)
+                     .attr("height", graphHeight)
+                     .attr("fill", "#d5f4e6")
+                     //.style("stroke", "black")
+                     //.style("stroke-width", borderWidth)
+                     .classed("graph-border", true);
+
+  var dayLabel = graphSVG.append("g")
+                        .append("text")
+                        .attr("x", margins.left + graphWidth/2 - 50)
+                        .attr("y", margins.top /2)
+                        .attr("font-size", 40)
+                        .text("Day"+selectedDay)
+                        .classed("day-label", true);
+
 
   var graphData = graphSVG.append("g")
                     .attr("x", margins.left)
                     .attr("y", margins.top)
                     .classed("graph-data", true);
 
+  var yAxis = graphSVG.append("g")
+                      .call(yAxis)
+                      .attr("transform", function(){
+                      return "translate(" + (margins.left - 3) + "," + margins.top + ")";
+                      });
 
-  console.log("svg", )
+
   var graphBars = graphData.selectAll("rect")
                             .data(bins)
                             .enter()
                             .append("rect")
-                            .attr("x", function(bar, i){return i * barWidth + margins.left})
-                            .attr("y", function(bar, i){return graphHeight - yScale(bar.length)})
+                            .attr("x", function(bar, i){return (i * barWidth) + margins.left})
+                            .attr("y", function(bar, i){console.log("bar-y:" + yScale(bar.length));return graphHeight + margins.top - yScale(bar.length)})
                             .attr("width", barWidth)
-                            .attr("height", function(bar){console.log("translte", yScale(bar.length));return yScale(bar.length)})
+                            .attr("height", function(bar){console.log("Value:"+ bar.length + " Height:" +  yScale(bar.length));return yScale(bar.length)})
                             .attr("class", "graph-bar");
 
-  var barLabel = graphData.selectAll("text")
+
+
+  var barLabels = graphData.selectAll("text")
                           .data(bins)
                           .enter()
                           .append("text")
-                          .attr("x", function(bar, i){return i * barWidth + margins.left})
-                          .attr("y", function(){return graphHeight + 10})
+                          .attr("x", function(bar, i){return (i * barWidth) + margins.left + (barWidth/2.4)})
+                          .attr("y", function(){return graphHeight + margins.top + 30})
                           .text(function(bar){
-                            console.log("String", String(bar.x0) + "-" + String(bar.x1));
+                            //console.log("String", String(bar.x0) + "-" + String(bar.x1));
                             return String(bar.x0) + "-" + String(bar.x1);
                           })
-                          .attr("class", "bar-label");
+                          .attr("class", "bar-label")
+                          .attr("font-size", 25);
 
-  var xLabel = graphData.append("text")
-                        .text("Grades")
-                        .attr("x", function(){return graphWidth/2 + margins.left - 25})
-                        .attr("y", function(){return graphHeight + margins.bottom})
+  var xLabel = graphSVG.append("text")
+                        .text("Score")
+                        .attr("x", function(){return graphWidth/2 + margins.left - 35})
+                        .attr("y", function(){return graphHeight + margins.top + 70})
+                        .attr("font-size", 25)
+
+    var yLabel = graphSVG.append("text")
+                          .text("Frequency")
+                          .attr("x", function(){return margins.left - 50})
+                          .attr("y", function(){return margins.top - 10})
+                          .attr("font-size", 20)
 //var graphBars = graphData.selectAll("rect")
                      // .data(scoreFrequencies)
                      // .enter()
@@ -223,7 +250,7 @@ var createDayMenu = function(dataSet, menuSelector){
                   .text(function(bar, i){return days[i]})
                   .on("click", function(){
                     console.log("Clicked");
-                    d3.selectAll(".graph-bar").remove();
+                    //d3.selectAll(".graph-bar").remove();
                     d3.selectAll(".bar-label").remove();
                     newSelectedDay = this.innerText;
                     dataPromise.then(function(data){
@@ -233,14 +260,13 @@ var createDayMenu = function(dataSet, menuSelector){
                   });
   //console.log(dayButtons);
 }
-//Main process
 
 dataPromise.then(function(data){
       var reformattedData = reformatData(data);
       drawChart(reformattedData, "#histogram", 1, screenSettings, marginSettings);
       createDayMenu(reformattedData, ".pure-menu-list");
-
     });
+window.alert("Day menu on the side can scroll.")
 
 
 //Next: Set the buckets
