@@ -1,0 +1,26 @@
+h1{
+  
+}
+
+.graph-bar{
+  stroke: white;
+  fill:blue;
+  stroke-width:3;
+  fill-opacity:0.6;
+  stroke-opacity:0.9
+}
+
+.sidebar{
+  position: fixed;
+  top:0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  overflow: scroll;
+}
+
+.pure-u-1-8.content{
+  position: absolute;
+  left: 15%;
+  width: 100%;
+}
