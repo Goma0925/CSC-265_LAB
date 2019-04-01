@@ -266,7 +266,7 @@ dataPromise.then(function(data){
       drawChart(reformattedData, "#histogram", 1, screenSettings, marginSettings);
       createDayMenu(reformattedData, ".pure-menu-list");
     });
-//window.alert("Day menu on the side can scroll.")
+window.alert("Day menu on the side can scroll.")
 
 
 //Next: Set the buckets
