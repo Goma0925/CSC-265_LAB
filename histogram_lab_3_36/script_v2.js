@@ -59,7 +59,7 @@ var updateChart = function(dataSet, svgSelector, selectedDay, screen, margins){
 
     var binMaker = d3.histogram()
                       .domain([0,10])
-                      .thresholds([2, 4, 6, 8,]);
+                      .thresholds([1, 2, 3, 4, 5, 6, 7, 8, 9,]);
 
     var bins = binMaker(dataSet[day]);
     console.log("Bins:", bins)
@@ -80,18 +80,18 @@ var updateChart = function(dataSet, svgSelector, selectedDay, screen, margins){
                               .attr("class", "graph-bar")
 
 
-    var barLabels = graphData.selectAll("text")
-                            .data(bins)
-                            .enter()
-                            .append("text")
-                            .attr("x", function(bar, i){return (i * barWidth) + margins.left + (barWidth/2.4)})
-                            .attr("y", function(){return graphHeight + margins.top + 30})
-                            .text(function(bar){
-                              //console.log("String", String(bar.x0) + "-" + String(bar.x1));
-                              return String(bar.x0) + "-" + String(bar.x1);
-                            })
-                            .attr("class", "bar-label")
-                            .attr("font-size", 25);
+var barLabels = graphData.selectAll("text")
+                        .data(bins)
+                        .enter()
+                        .append("text")
+                        .attr("x", function(bar, i){return (i * barWidth) + margins.left + (barWidth/2) - 10})
+                        .attr("y", function(){return graphHeight + margins.top + 30})
+                        .text(function(bar){
+                          //console.log("String", String(bar.x0) + "-" + String(bar.x1));
+                          return String(bar.x0);
+                        })
+                        .attr("class", "bar-label")
+                        .attr("font-size", 25);
 
     d3.select(".day-label").text("")
                           .text("Day" + selectedDay.replace("day", ""))
@@ -129,7 +129,7 @@ console.log("extent", d3.extent(dataSet[day]))
 
   var binMaker = d3.histogram()
                     .domain([0,10])
-                    .thresholds([2, 4, 6, 8,]);
+                    .thresholds([1, 2, 3, 4, 5, 6, 7, 8, 9,]);
 
   var bins = binMaker(dataSet[day]);
 
@@ -190,18 +190,18 @@ console.log("extent", d3.extent(dataSet[day]))
 
 
 
-  var barLabels = graphData.selectAll("text")
-                          .data(bins)
-                          .enter()
-                          .append("text")
-                          .attr("x", function(bar, i){return (i * barWidth) + margins.left + (barWidth/2.4)})
-                          .attr("y", function(){return graphHeight + margins.top + 30})
-                          .text(function(bar){
-                            //console.log("String", String(bar.x0) + "-" + String(bar.x1));
-                            return String(bar.x0) + "-" + String(bar.x1);
-                          })
-                          .attr("class", "bar-label")
-                          .attr("font-size", 25);
+var barLabels = graphData.selectAll("text")
+                        .data(bins)
+                        .enter()
+                        .append("text")
+                        .attr("x", function(bar, i){return (i * barWidth) + margins.left + (barWidth/2) - 10})
+                        .attr("y", function(){return graphHeight + margins.top + 30})
+                        .text(function(bar){
+                          //console.log("String", String(bar.x0) + "-" + String(bar.x1));
+                          return String(bar.x0);
+                        })
+                        .attr("class", "bar-label")
+                        .attr("font-size", 25);
 
   var xLabel = graphSVG.append("text")
                         .text("Score")
@@ -266,7 +266,7 @@ dataPromise.then(function(data){
       drawChart(reformattedData, "#histogram", 1, screenSettings, marginSettings);
       createDayMenu(reformattedData, ".pure-menu-list");
     });
-window.alert("Day menu on the side can scroll.")
+//window.alert("Day menu on the side can scroll.")
 
 
 //Next: Set the buckets
