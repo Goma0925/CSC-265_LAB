@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Ch.13 Prep</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+  </head>
+  <body>
+    <div class="heading">
+      <h1 class="title">Ch.13 Prep</h1>
+    </div>
+    <div class="content-area">
+      <hr>
+      <div class="infographic">
+      <h2>Ch.13 Prep Force Diagram</h2><br><br>
+        <pre class="code-snip">
+          dataset1 = {
+            	nodes: [
+            		{station_name: “Tokyo”},
+            		{station_name: “Nagoya”},
+            		{station_name: “Osaka”},
+            		{station_name: “Kyoto”},
+            	},
+            	edges: [
+            	{source: 0, target: 1},
+            	{source: 1, target: 2},
+            	{source: 2, target: 3},
+            	{source: 3, target: 1},
+            	]
+            }
+        </pre>
+        <p>The data set above could be used for force diagram because it contains the network data that consists of nodes and edges. This data set is called a graph.  The force layout allows you to simulate movements based on physics.
+
+As the book talks about, the dataset can contain other attributes than nodes and edges. Therefore, the following two dataset can also be used for force diagram. Using these datasets, we can create things such as draggable nodes, graph, and many other visualization using physics.<br><br></p>
+        <pre class="code-snip">
+          dataset2 = {
+          	area: “Japan”
+          	nodes: [
+          		{station_name: “Tokyo”},
+          		{station_name: “Nagoya”},
+          		{station_name: “Osaka”},
+          		{station_name: “Kyoto”},
+          	},
+          	edges: [
+          	{source: 0, target: 1},
+          	{source: 1, target: 2},
+          	{source: 2, target: 3},
+          	{source: 3, target: 1},
+          	]
+          }
+        </pre>
+        <pre class="code-snip">
+          dataset3 = {
+          	type: “highways”
+          	area: “South”
+          	nodes: [
+          		{city: “Louisville”},
+          		{city: “Lexinton”},
+          		{city: “Nashville”},
+          		{city: “Cincinnati”},
+          	},
+          	edges: [
+          	{source: 0, target: 1},
+          	{source: 1, target: 2},
+          	{source: 2, target: 3},
+          	{source: 3, target: 1},
+          	]
+          }
+        </pre>
+      </div>
+    </div>
+
+  </body>
+</html>
