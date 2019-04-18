@@ -12,7 +12,7 @@ h1{
 }
 
 p{
-  margin-top: 15px; 
+  margin-top: 15px;
 }
 
 img{
@@ -43,4 +43,8 @@ img{
 
 .infographic{
   margin: 20px;
+}
+
+.reference{
+  padding-left:50px;
 }
