@@ -7,24 +7,25 @@
   </head>
   <body>
     <center><h1>Analysis of Different Industries</h1></center>
-    <div class="description">
-
-    </div>
     <select name='' id="y-var">
-    	<option value='output' >Output(mil yen)</option>
-    	<option value='num_workers'>Number of workers</option>
-    	<option value='hours'>Labor hours</option>
-    	<option value='cost'>Labor cost</option>
+    	<option value='output' >Y: Output (mil yen)</option>
+    	<option value='number_of_workers'>Y: Number of workers</option>
+    	<option value='man_hour'>Y: Labor hours</option>
+    	<option value='labor_cost'>Y: Labor cost</option>
     </select>
     <div id=chart-section>
     </div>
     <button id="start-animation">See the change</button>
     <select name='' id="x-var">
-    	<option value='number_of_workers'>Number of workers</option>
-      <option value='output' >Output(mil yen)</option>
-    	<option value='man_hours'>Labor hours</option>
-    	<option value='labor_cost'>Labor cost</option>
+    	<option value='number_of_workers'>X: Number of workers</option>
+      <option value='output' >X: Output(mil yen)</option>
+    	<option value='man_hour'>X: Labor hours</option>
+    	<option value='labor_cost'>X: Labor cost</option>
     </select>
+    <div class="description">
+      This chart was created to see the general trend and characteristics of different industries in Japan. You can choose two variables for x and y axis and click “see change”. Then it will show you an animation that resents the change of those two variables for each industries over time.  For example, you can see some of the industries that have increased outputs but decreased the number of workers.
+    </div>
+
  </body>
   <script src="https://d3js.org/d3.v5.min.js"></script>
   <script type="text/javascript" src="script.js"></script>
