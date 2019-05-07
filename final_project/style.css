@@ -16,3 +16,14 @@
 .title {
   font-family: Arial, Helvetica, sans-serif;
 }
+
+#chart-section{
+  text-align: center;
+}
+
+#start-animation{
+  position: absolute;
+  height: 50px;
+  right: 10%;
+  top:50%;
+}

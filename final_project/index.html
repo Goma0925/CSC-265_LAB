@@ -6,15 +6,26 @@
     <link href="style.css" rel="stylesheet"/>
   </head>
   <body>
-    <center><h1>Outputs by different industries & number of college graduates who went into those industries.</h1></center>
+    <center><h1>Analysis of Different Industries</h1></center>
     <div class="description">
-    In this project, I am comparing the outputs of different industries and the number college graduates who go into those industries. I am hoping to see some correlations between the outputs and the labor force in different industries. Although I am still analyzing the data, here are some pieces of data that I am working on. One of the difficulties is that two of the datasets have slightly different format, which forces me to reformat the dataset.
+
     </div>
-    <div id=main-graph>
-      <span>●Outputs of different industries from 1970-2012</span>
-      <image src="chart.svg">
+    <select name='' id="y-var">
+    	<option value='output' >Output(mil yen)</option>
+    	<option value='num_workers'>Number of workers</option>
+    	<option value='hours'>Labor hours</option>
+    	<option value='cost'>Labor cost</option>
+    </select>
+    <div id=chart-section>
     </div>
-     </body>
+    <button id="start-animation">See the change</button>
+    <select name='' id="x-var">
+    	<option value='number_of_workers'>Number of workers</option>
+      <option value='output' >Output(mil yen)</option>
+    	<option value='man_hours'>Labor hours</option>
+    	<option value='labor_cost'>Labor cost</option>
+    </select>
+ </body>
   <script src="https://d3js.org/d3.v5.min.js"></script>
   <script type="text/javascript" src="script.js"></script>
 </html>

@@ -1,265 +1,197 @@
-var dataP = d3.json("classData.json");
+dataP = d3.json("data/industry_data.json");
 
 //Global GraphSettings---------------------------------------------------
 svgScreen = {
-  size: 700
+  width: 700,
+  height: 500,
 }
 
 svgMargin = {
   top: 30,
   bottom:30,
-  left: 0,
-  right: 200
+  left: 100,
+  right: 40
 }
 
-var boxSize = 0; //Initialized in initBoxSize()
+var currentYear = 0;
 
 var xScale = d3.scaleLinear();
 var yScale = d3.scaleLinear();
+var colors = d3.scaleOrdinal(d3.schemeAccent)
 
-
-
-var startColor = "#ffffff";
-var endColor = "#3498DB"
-
-var colorScale = [
-    {threshold:[1.0, 0.7], color: "#FA2A05"},//red
-    {threshold:[0.7, 0.4], color: "#FAA505"},//pink
-    {threshold:[0.4, 0.2], color: "#EBFA05"},//light pink
-    {threshold:[0.2, -0.2], color: "#66FA05"},//white
-    {threshold:[-0.2, -0.4], color: "#EBFA05"},//light pink
-    {threshold:[-0.4, -0.7], color: "#FAA505"},//pink
-    {threshold:[-0.7, -1.0], color: "#FA2A05"},//red
-    ]
-
-var colorMap = function(val){
-  if (val === 1){
-    return "black";
-  }
-  else {
-      var colorCode = ""
-      colorScale.forEach(function(scaleObj){
-      //console.log("val:" + val + "   threshold[1]:" + scaleObj.threshold[1])
-      if ( val <= scaleObj.threshold[0] && val > scaleObj.threshold[1]){console.log(scaleObj.threshold[0] + ">=" + val + " >" + scaleObj.threshold[1]);
-      console.log("COLOR=", scaleObj.color);
-      colorCode = scaleObj.color};
-    });
-    return colorCode;
-  }
-};
-
+var industry_list = ["Agriculture, Forestry and Fisheries", "Mining", "Food", "Texitile", "Paper and Pulp", "Chemical",
+                      "Oil and Coal Product", "Ceramics, Stone Product", "Manufacture of Metal", "Fabricated Metal Product",
+                      "Manufacture of General Purpose Machinery", "Manufacture of Electrical Machinery",
+                      "Manufacture of Transportation Equipment","Manufacture of Precision Instrument industry", "Other Manufacture",
+                      "Construction", "Electricity, gas, heat supply and water", "Retail","Finance and Insurance", "Real Estate",
+                      "Transportation and Communication", "Services(Private, Non-profit)", "Services(Government)"]
 //-----------------------------------------------------------------------
 
 
 //Initializers-----------------------------------------------------------
-var initScales = function(numOfStudents){
-  xScale.domain([0, numOfStudents])
-        .range([svgMargin.left + boxSize, svgScreen.size - svgMargin.right - boxSize]);
-  yScale.domain([0, numOfStudents])
-        .range([svgMargin.left + boxSize, svgScreen.size - svgMargin.right - boxSize]);
+var initScales = function(data, selectedVars, electedIndustries){
+  collectiveValArrX = []
+  data[selectedVars["x"]].industries.forEach(function(industryObj, i){
+    // console.log("Industry:", industryObj.values)
+    // console.log("Industry extent:", d3.extent(industryObj.values))
+    // console.log("min:", d3.min(industryObj.values))
+    // console.log("max", d3.max(industryObj.values));
+    //
+    // console.log("----------------")
+    collectiveValArrX = collectiveValArrX.concat(d3.extent(industryObj.values));
+    //console.log("extent:", collectiveValArrX.concat(d3.extent(industrObj.values)));
 
-};
-
-var initBoxSize = function(numOfStudents){
-  console.log("initBoxSize");
-  console.log("svgScreen.size", svgScreen.size);
-  console.log("numOfStudents:", numOfStudents);
-  boxSize = (svgScreen.size - svgMargin.left - svgMargin.right) / numOfStudents;
-};
-
-var correlation = function(arr1, arr2){
-  var mean1 = d3.mean(arr1);
-  var mean2 = d3.mean(arr2);
-  var numeratorArr =  arr1.map(function(d, i){return (arr1[i]-mean1) * (arr2[i]-mean2)});
-  //console.log("n", numeratorArr);
-  var numerator = d3.sum(numeratorArr);
-  var denominator = d3.deviation(arr1) * d3.deviation(arr2);
-  var r = (1/(arr1.length-1)) * numerator/denominator;
-  console.log("R="+Math.round(r * 1000) / 1000);
-  return Math.round(r * 100) / 100;
-};
-
-var makeDataArr = function(pengData){
-  var dataArr = [];
-  var pictureSrcArr = []
-  pengData.forEach(function(pengX, x){
-    pengData.forEach(function(pengY, y){
-      var corrObj = {};
-      corrObj.x = x;
-      corrObj.y = y;
-      var pengXHomework = pengX.homework.map(function(day){return day.grade});
-      var pengYHomework = pengY.homework.map(function(day){return day.grade});
-      //console.log("pengXHomework:", pengXHomework);
-      //console.log("pengYHomework:", pengYHomework);
-      corrObj.r = correlation(pengXHomework, pengYHomework);
-      corrObj.xPengName = pengX.picture;
-      corrObj.yPengName = pengY.picture;
-      console.log("("+x+","+y+"):", corrObj);
-      dataArr.push(corrObj);
-    });
   });
-  return dataArr;
-}
 
-var makePicSrcArr = function(pengData){
-  var pictureSrcArr = []
-  pengData.forEach(function(peng, x){
-    pictureSrcArr.push(peng.picture);
+  collectiveValArrY = []
+  data[selectedVars["y"]].industries.forEach(function(industryObj, i){
+    collectiveValArrY = collectiveValArrY.concat(d3.extent(industryObj.values));
+    //console.log("extentY:", collectiveValArrY.concat(d3.extent(industrObj.values)));
   });
-  console.log("pic", pictureSrcArr)
-  return pictureSrcArr;
-}
+  //console.log("reducedY:", d3.extent(collectiveValArrY));
+  //console.log("collectiveY:", d3.extent(collectiveValArrY));
+
+
+
+  xScale.domain(d3.extent(collectiveValArrX))
+        .range([svgMargin.left, svgScreen.width - svgMargin.right])
+        //.nice();
+  yScale.domain(d3.extent(collectiveValArrY))
+        .range([svgScreen.height - svgMargin.top - svgMargin.bottom, svgMargin.top])
+        //.nice();
+
+  // xAxis.scale(xScale);
+  // yAxis.scale(yScale);
+  console.log("ScaleCheck X:", xScale.domain(), xScale.range());
+  console.log("ScaleCheck y:", yScale.domain(), yScale.range())
+
+};
+
+
+var getSelectedVars = function(data){
+  xVar = d3.select("#x-var").node().options[d3.select("#x-var").node().selectedIndex].value;
+  yVar = d3.select("#y-var").node().options[d3.select("#y-var").node().selectedIndex].value;
+  console.log("USING X=" + xVar + "   Y=" + yVar);
+  indices = {}
+  data.forEach(function(d, i){
+    if (d.dataType === xVar){indices["x"] = i;}
+    if (d.dataType === yVar){indices["y"] = i;}
+  });
+  console.log("Selected Vars:", indices);
+  return indices;
+};
 //-----------------------------------------------------------------------
 
-var drawGraph = function(dataArr, picSrcArr){
-  console.log("Using dataArr:", dataArr);
-  //Insert student image
-  var graphSvg = d3.select("#main-graph")
-                .append("svg")
-                .attr("class", "svg-graph")
-                .attr("width", svgScreen.size)
-                .attr("height", svgScreen.size);
+var setUp = function(data){
+  svg = d3.select("#chart-section")
+          .append("svg")
+          .attr("width", svgScreen.width)
+          .attr("height", svgScreen.height)
+          .attr("class", "chart-svg");
 
-  var studentPicRow = graphSvg
-                .append("g")
-                .attr("class", "studetn-pics")
-                .selectAll("image")
-                .data(picSrcArr)
-                .enter()
-                .append("image")
-                .attr("xlink:href", function(picSrc){return "student_images/" + picSrc})
-                .attr("x", function(picSrc, i){return xScale(i+1)})
-                .attr("y", function(){return yScale(0)})
-                .attr("width", boxSize)
-                .attr("height", boxSize);
-                console.log("picSize:", boxSize);
+  graphBackground = svg.append("rect")
+                      .attr("x", svgMargin.left)
+                      .attr("width", svgScreen.width - svgMargin.left - svgMargin.right)
+                      .attr("height", svgScreen.height - svgMargin.bottom - svgMargin.top)
+                      .attr("stroke-width", 2)
+                      .attr("stroke", "black")
+                      .attr("fill", "white")
+                      .classed("graph-bg", true);
+                      var d1 = [10,5,20,30];
+  //Event listeners
+};
 
-  var studentPicCol = graphSvg
-                .append("g")
-                .attr("class", "studetn-pics")
-                .selectAll("image")
-                .data(picSrcArr)
-                .enter()
-                .append("image")
-                .attr("xlink:href", function(picSrc){return "student_images/" + picSrc})
-                .attr("x", xScale(0))
-                .attr("y", function(picSrc, i){return yScale(i+1)})
-                .attr("width", boxSize)
-                .attr("height", boxSize);
-                console.log("picSize:", boxSize);
+var setUpEventListeners = function(data){
+  d3.select("#start-animation")
+    .on("click", function(){
+      updateChart(data, 1);
+    });
+}
 
+//-----------Supporter functions--------------
+var getValueArrBetween = function(start, end){
+  valuesInBetween = []
+  if (start <= end){
+    for (var i=start + 1; i <= end; i++){
+      valuesInBetween.push(i)
+    }}
+  else  if (start > end){
+      for (var i=start - 1; i >= end; i--){
+        valuesInBetween.push(i)
+      };
+  };
+  return valuesInBetween;  //This does not include the start value
+}
+//--------------------------------------------
 
-  var dataRect = graphSvg.append("g")
-                          .attr("class", "data-rect")
-                          .selectAll("rect")
-                          .data(dataArr)
-                          .enter()
-                          .append("rect")
-                          .attr("x", function(corrObj){return xScale(corrObj.x + 1)})
-                          .attr("y", function(corrObj){return yScale(corrObj.y + 1)})
-                          .attr("width", boxSize)
-                          .attr("height", boxSize)
-                          .attr("stroke", "#555556")
-                          .attr("stroke-width", 1)
-                          .attr("fill", function(corrObj){console.log("VAL=" + corrObj.r + "   " + colorMap(corrObj.r));return colorMap(corrObj.r)})
-//------------------------
+var drawChart = function(data, year){
+  svg = d3.select("#chart-section>svg");
+  yearsInBetween = getValueArrBetween(0, year);
+  //svg.call(yAxis);
+  //Pick x & y variables
+  selectedVars = getSelectedVars(data);
+  initScales(data, selectedVars, industry_list);
 
-var legendWidth = 80;
-var legendHeight = 300;
+  var xAxis = d3.axisBottom().scale(xScale).ticks(5);
+  var yAxis = d3.axisLeft().scale(yScale);
 
-var legendColorScale = ["#F90422", "#FB5166", "FA7E8D", "FCFAFA", "FA7E8D", "FB5166", "F90422"]
+  svg.append("g")
+      .attr("class", "x-axis")
+        .attr("transform", "translate(0," +(svgScreen.height - svgMargin.top - svgMargin.bottom) + ")")
+      .call(xAxis);
 
-var legend = graphSvg
-            .append("g")
-            .attr("class", "legend")
-            .attr("transform", "translate(" +  xScale(picSrcArr.length + 2) + "," + boxSize + ")");
+  svg.append("g")
+      .attr("class", "y-axis")
+      .attr("transform", "translate(" + svgMargin.left + ",0)")
+      .call(yAxis);
 
-var legendRects = legend.selectAll("rect")
-                  .data(colorScale)
-                  .enter()
-                  .append("rect")
-                  .attr("x", 0)
-                  .attr("y", function(threshold, i){return (i * 30) + 20})
-                  .attr("height", function(threshold, i){return 20})
-                  .attr("width", function(threshold, i){return 20})
-                  .attr("fill", function(threshold){return threshold.color})
-                  .attr("stroke", "black")
-                  .attr("stroke-width", 1)
+  dots = svg.append("g")
+            .attr("class", "data-points")
+            .selectAll("rect")
+            .data(data[selectedVars["x"]].industries)
+            .enter()
+            .append("circle")
+            .attr("cx", function(industryObj, i){return xScale(industryObj.values[year])})
+            .attr("cy", function(industryObj, i){return yScale(data[selectedVars["y"]].industries[i].values[year])})
+            .attr("r", 5);
+  pathGroup = svg.append("g")
+          .attr("class", "dot-traces")
 
-var legendTexts = legend.selectAll("text")
-                  .data(colorScale)
-                  .enter()
-                  .append("text")
-                  .attr("x", 25)
-                  .attr("y", function(threshold, i){return (i * 30) + 35})
-                  .text(function(threshold){return threshold.threshold[0] + " ~ " + threshold.threshold[1]});
+ industry_list.forEach(function(industry_name, industry_index){
+   var line = d3.line()
+                    .x(function(val, year) { return xScale(data[selectedVars["x"]].industries[industry_index].values[year]); })
+                    .y(function(val, year) { return yScale(data[selectedVars["y"]].industries[industry_index].values[year]); });
 
-var legendTitle = legend.append("text")
-                        .text("Correlation coeficient R:")
-                        .attr("x", 0)
-                        .attr("y", 10)
+console.log("" + data[selectedVars["x"]].industries[industry_index].values.slice(0, currentYear))
+   pathGroup.append("path")
+       .datum(data, function(d){data[selectedVars["x"]].industries[industry_index].values.slice(0, currentYear)})
+       .attr("fill", colors(industry_name))
+       .attr("fill", "none")
+       .attr("stroke", colors(industry_name))
+       .attr("stroke-linejoin", "round")
+       .attr("stroke-linecap", "round")
+       .attr("stroke-width", 3)
+       .attr("class","path-" + industry_name)
+       .attr("d", line);
 
-// var legend = graphSvg
-// .append("defs")
-// .append("svg:linearGradient")
-// .attr("id", "gradient")
-// .attr("x1", "100%")
-// .attr("y1", "0%")
-// .attr("x2", "100%")
-// .attr("y2", "100%")
-// .attr("spreadMethod", "pad");
-//
-// legend
-// .append("stop")
-// .attr("offset", "0%")
-// .attr("stop-color", endColor)
-// .attr("stop-opacity", 1);
-//
-// legend
-// .append("stop")
-// .attr("offset", "100%")
-// .attr("stop-color", startColor)
-// .attr("stop-opacity", 1);
-//
-// graphSvg.append("rect")
-// .attr("width", legendWidth/4)
-// .attr("height", legendHeight)
-// .style("fill", "url(#gradient)")
-// .attr("stroke", "#555556")
-// .attr("transform", "translate(" +  (svgScreen.size - 50) + "," + boxSize + ")");
-//
-// legenAxis = graphSvg.append("g")
-//             .attr("class", "legen-axis")
-//             .call(axisFunc)
-//             .attr("transform", "translate(" +  (svgScreen.size - 50 + legendWidth/4) + "," + boxSize + ")");;
+ });
+};
 
+var updateChart = function(data, targetYear){
+  yearsInBetween = getValueArrBetween(currentYear, targetYear);
 
-
-
-
-
-  //----------------------
-  // var studentPics = graphSvg
-  //                   .append("circle")
-  //                   .attr("cx", svgScreen.size)
-  //                   .attr("cy", 0)
-  //                   .attr("r", 40)
-  //                   .attr("fill", red)
-
-console.log("x domai:", xScale(23));
+  yearsInBetween.forEach(function(year){
+      dots = d3.select("data-points")
+                .selectAll("circle")
+                .data(data)
+  });
 };
 
 dataP.then(function(data){
-  var numOfStudents = data.length;
-  console.log("Data", data);
-  var arr1= [1, 2, 3, 4, 5, 6];
-  var arr2 = [10, 20, 30, 40, 50, 60];
-  var dataArr = makeDataArr(data); //Stores the correlation objs;
-  var picSrcArr = makePicSrcArr(data); //Stores the correlation objs;
-  initScales(numOfStudents);
-  initBoxSize(numOfStudents);
-  drawGraph(dataArr, picSrcArr);
-
+  console.log(data);
+  setUp(data);
+  setUpEventListeners(data);
+  drawChart(data, currentYear);
 });
 
 
